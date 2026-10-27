@@ -1,0 +1,38 @@
+name: Basic CI-CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Application
+        run: node --check app.js
+
+      - name: Run Automated Tests
+        run: npm test
+
+      - name: Deploy Application
+        run: |
+          mkdir -p deployed
+          cp app.js package.json package-lock.json deployed/
+          echo "Application deployment package created successfully."
